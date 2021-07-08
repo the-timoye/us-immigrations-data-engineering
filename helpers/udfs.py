@@ -2,7 +2,7 @@ import pandas as pd
 import configparser;
 from pyspark.sql.functions import udf
 config = configparser.ConfigParser();
-config.read('keys.cfg')
+config.read('config.cfg')
 @udf
 def get_country(code):
     '''
