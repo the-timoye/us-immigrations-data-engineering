@@ -19,9 +19,7 @@ new_column_names = {
 def clean_immigration_data(
     dataframe
 ):
-    print('===========================================================================================================')
     print('========================================= CLEANING IMMIGRATION DATA =========================================')
-    print('===========================================================================================================')
 
     new_df = remane_columns(dataframe, new_column_names)
 
@@ -61,3 +59,4 @@ def clean_immigration_data(
         'transport_mode',
         get_transport_mode(new_df.mode.cast(StringType()))
     )
+    return new_df
