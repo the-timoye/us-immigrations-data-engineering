@@ -1,3 +1,4 @@
+from pyspark.sql.functions import monotonically_increasing_id
 from helpers.helpers import remane_columns
 from pyspark.sql.types import FloatType, IntegerType, StringType
 
@@ -34,5 +35,8 @@ def clean_cities_data(
         new_df.avg_household_size.cast(FloatType()),
         new_df.state_code.cast(StringType()),
         new_df.race.cast(StringType())
-    ).na.fill(value='not provided')
+    ).na.fill(value='not provided').distinct()
+
+    new_df = new_df.withColumn('city_id', monotonically_increasing_id())
+    
     return new_df

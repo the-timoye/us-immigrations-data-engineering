@@ -1,5 +1,5 @@
-from pyspark.sql.types import DoubleType, StructType, StructField, StringType, IntegerType, FloatType, StringType;
-from pyspark.sql.functions import to_date;
+from pyspark.sql.types import  StringType, IntegerType, StringType;
+from pyspark.sql.functions import monotonically_increasing_id, to_date;
 from helpers.helpers import remane_columns
 from helpers.udfs import get_address, get_country, get_date, get_transport_mode, get_visa_type
 
@@ -36,7 +36,7 @@ def clean_immigration_data(
         new_df.gender, 
         new_df.airline,
         new_df.mode.cast(IntegerType())
-    ).na.fill(value='not provided')
+    ).na.fill(value='not provided').distinct()
 
     # get country name for residential code
     new_df = new_df.withColumn(
@@ -59,4 +59,5 @@ def clean_immigration_data(
         'transport_mode',
         get_transport_mode(new_df.mode.cast(StringType()))
     )
+    new_df = new_df.withColumn('immigrant_id', monotonically_increasing_id())
     return new_df

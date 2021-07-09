@@ -1,5 +1,5 @@
-from etl.data_model import model_data
-from etl.data_model import tables as table_names
+from etl.models import model_data
+from etl.models import tables as table_names
 
 
 class Tables:
