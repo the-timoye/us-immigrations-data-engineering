@@ -72,6 +72,21 @@ def get_address(abbr):
     return config['US_STATES'][abbr]
 
 @udf
+def get_mode(code):
+    '''
+        @description:
+             convert transport code to transport type. 
+             codes are provided in config file in a key value pair.
+        @params:
+            code(INT): transport code identifier
+        @returns:
+            (str): mode of transport - air, land, sea
+    '''
+    if  code is None or code == "" or code == "null":
+        return 4
+    return int(code)
+
+@udf
 def get_transport_mode(code):
     '''
         @description:
@@ -82,8 +97,8 @@ def get_transport_mode(code):
         @returns:
             (str): mode of transport - air, land, sea
     '''
-    if code == 'not provided' or code is None:
+    if code == 4 or code is None:
         return 'not provided'
-    if code not in config['TRANSPORT_MODE']:
+    if str(code) not in config['TRANSPORT_MODE']:
         return f'invalid code {code}'
-    return config['TRANSPORT_MODE'][code]
+    return config['TRANSPORT_MODE'][str(code)]
