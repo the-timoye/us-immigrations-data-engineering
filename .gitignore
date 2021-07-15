@@ -1,4 +1,10 @@
 /venv
-/datasets
+*/datasets
 *.cfg
 */__pycache__
+*/*/__pycache__
+*/*/*/__pycache__
+/airflow/logs
+/airflow/*.pid
+/airflow/*.py
+/airflow/*.db
