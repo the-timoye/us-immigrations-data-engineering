@@ -58,7 +58,7 @@ A: Then the best place to have this data after cleaning is the cloud. Having a D
 - Ensure to have all tools and libraries in the requirements.txt file installed, and your virtual environment activated
 - To explore the datasets, run the `explore_data.py` file in the root of the project. `python explore_data.py`
 - Ensure airflow is installed properly, and the `$AIRFLOW_HOME` and `$PYTHONPATH` variables are set to the root airflow directory
-- Have a `config.cfg `file. Check the `config.md` file to see what items need to be available in your `config.cfg` file
+- Have a `config.cfg `file the root of the airflow folder. Check the `config.md` file to see what items need to be available in your `config.cfg` file
 - Ensure you have ready an S3 bucket, and a Redshift Cluster (accesible) before running tasks on airflow
 - To view the datasets after they have been cleaned and loaded to S3, run `python index.py` in your terminal.
 - Your airflow should have the following connections: <br>
