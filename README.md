@@ -36,6 +36,8 @@ File Locations <br>
     Citites: `airflow/plugins/data_cleaning/cities.py` <br>
     Immigrations: `airflow/plugins/data_cleaning/immigrations.py`
 
+![alt text](ERD.png "ERD")
+
 ### DATA LOADING PROCESSES
 Both datasets are compiled and staged first, to an S3 bucket in parquet file format. This is done to have a Data Lake representation of both datasets/tables, and easy access to redshift.
 Two major tools are used in this case: Spark - for loading the data, and Amazon S3.
