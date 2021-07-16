@@ -44,6 +44,11 @@ Having these datasets stored in an S3 bucket allows an opportunity to use the Da
 A Data Warehouse option is also provided for proper data structiuring and reduction of Data Lakes chaotic feature among other reasons. Amazons Redshift tool is used as a warehouse to store these datasets in separate facts and dimensional tables. The S3 to Redshift process is carried out using Apache's Airflow - a DAG-based Data Engineering workflow management system. 
 Airflow is used in this case to ensure each of the above processes are carried out in the right order, and the right scheduled time, making the ETL process as seamless as possible.
 
+### DATA QUALITY CHECKS
+- Null Value Checks
+- Data Count Checks
+- Data-types Checks
+
 ## Other Possible Scenarios
 Q: If the data was increased 100 times: <br>
 A: Spark would still be the best possible tools to be used for the Data Exploration and Manipulation processes, as well as loading these datasets to S3.
