@@ -27,10 +27,10 @@ def model_data():
     cleaned_cities_data = clean_cities_data(cities_df)
 
     print(f'========================================= WRITING staging_immigrations_table TABLE TO S3 =========================================')
-    cleaned_immigration_df.repartition(1).write.mode('overwrite').parquet(f"s3a://{config['S3']['BUCKET']}/staging_immigrations_table.parquet")
+    cleaned_immigration_df.repartition(1).write.mode('overwrite').parquet(f"s3a://{config['S3']['BUCKET']}/{config['S3']['IMMIGRATION_KEY']}.parquet")
 
     print(f'========================================= WRITING staging_cities_table TABLE TO S3 =========================================')
-    cleaned_cities_data.repartition(1).write.mode('overwrite').parquet(f"s3a://{config['S3']['BUCKET']}/staging_cities_table.parquet")
+    cleaned_cities_data.repartition(1).write.mode('overwrite').parquet(f"s3a://{config['S3']['BUCKET']}/{config['S3']['CITIES_KEY']}.parquet")
 
     return 'Done'
 
