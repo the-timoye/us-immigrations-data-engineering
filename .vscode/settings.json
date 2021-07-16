@@ -1,0 +1,9 @@
+{
+    "python.analysis.extraPaths": [
+        "./airflow/helpers",
+        "./airflow/plugins",
+        "./etl/models",
+        "./airflow",
+        "./airflow/datasets"
+    ]
+}
