@@ -1,19 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from airflow import DAG
-from airflow.decorators import task
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python_operator import PythonOperator
-from airflow.operators.subdag_operator import SubDagOperator
 from airflow.operators.postgres_operator import PostgresOperator
 import configparser
-from textwrap import dedent
 from operators.StagTablesOperator import StageTablesOperator
 from plugins import model_data
 from sql.create_tables import CreateTables
 from sql.insert_data import InsertQueries
-from subdags.s3_to_redshift import s3_to_redshift
-from subdags.load_data import load_data
 from airflow.utils.task_group import TaskGroup
+from helpers.data_quality import (data_count_check, null_value_check, column_type_check)
 
 config = configparser.ConfigParser();
 config.read('config.cfg')
@@ -232,6 +228,70 @@ with DAG (
             """
         )
 
+    with TaskGroup("run_quality_checks") as run_quality_checks:
+        staging_immigrations_data_count_check = PythonOperator(
+            task_id = f"staging_immigrations_data_count_check",
+            dag=dag,
+            provide_context=True,
+            python_callable=data_count_check,
+            params = {
+                "table": "staging_immigrations",
+                "expected_row_count": 1410013
+            }
+        )
+        staging_cities_data_count_check = PythonOperator(
+            task_id = f"staging_cities_data_count_check",
+            dag=dag,
+            provide_context=True,
+            python_callable=data_count_check,
+            params = {
+                "table": "staging_cities",
+                "expected_row_count": 2891
+            }
+        )
+        staging_cities_null_values_check = PythonOperator(
+            task_id = f"staging_cities_null_values_check",
+            dag=dag,
+            provide_context=True,
+            python_callable=null_value_check,
+            params = {
+                "table": "staging_cities",
+                "column_name": "city"
+            }
+        )
+        staging_immigrations_null_values_check = PythonOperator(
+            task_id = f"staging_immigrations_null_values_check",
+            dag=dag,
+            provide_context=True,
+            python_callable=null_value_check,
+            params = {
+                "table": "staging_immigrations",
+                "column_name": "birth_year"
+            }
+        )
+        staging_immigrations_column_type_check = PythonOperator(
+            task_id = f"staging_immigrations_column_type_check",
+            dag=dag,
+            provide_context=True,
+            python_callable=column_type_check,
+            params = {
+                "table": "staging_immigrations",
+                "column_name": "arrival_date",
+                "data_type": "date"
+            }
+        )
+        staging_cities_column_type_check = PythonOperator(
+            task_id = f"staging_cities_column_type_check",
+            dag=dag,
+            provide_context=True,
+            python_callable=column_type_check,
+            params = {
+                "table": "staging_cities",
+                "column_name": "total_population",
+                "data_type": "integer"
+            }
+        )
+
     end_execution = DummyOperator (
         task_id = "End_Execution"
     )
@@ -244,4 +304,5 @@ stage_cities_table >> load_cities_facts
 [load_immigration_facts, load_cities_facts] >> tasks_break
 create_dimentions_table << tasks_break
 create_dimentions_table >> insert_into_dimensions_tables
-insert_into_dimensions_tables >> end_execution
+insert_into_dimensions_tables >> run_quality_checks
+run_quality_checks >> end_execution
