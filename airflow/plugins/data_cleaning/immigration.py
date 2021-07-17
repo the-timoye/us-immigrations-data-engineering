@@ -1,4 +1,4 @@
-from pyspark.sql.types import  StringType, IntegerType, StringType;
+from pyspark.sql.types import  StringType, IntegerType, StringType, DateType;
 from pyspark.sql.functions import monotonically_increasing_id, to_date;
 from helpers.helpers import remane_columns
 from helpers.udfs import get_address, get_country, get_date, get_mode, get_transport_mode, get_visa_type
@@ -28,7 +28,7 @@ def clean_immigration_data(
         @returns:
             A cleaned dataframe with renamed columns, no null values and appropraite column datatypes
     """
-    
+
     print('========================================= CLEANING IMMIGRATION DATA =========================================')
 
     new_df = remane_columns(dataframe, new_column_names)
@@ -73,4 +73,9 @@ def clean_immigration_data(
         'transport_mode',
         get_transport_mode(new_df.mode)
     ).withColumn('immigrant_id', monotonically_increasing_id())
+    new_df = new_df.withColumn(
+    'departure_date',
+    new_df.departure_date.cast(DateType())).withColumn(
+    'arrival_date',
+    new_df.arrival_date.cast(DateType()))
     return new_df
