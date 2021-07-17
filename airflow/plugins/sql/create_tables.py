@@ -7,7 +7,7 @@ class CreateTables:
             resident_country_code INTEGER,
             arrival_date DATE,
             address VARCHAR,
-            departure_date VARCHAR,
+            departure_date DATE,
             age INTEGER,
             visa_code INTEGER,
             birth_year INTEGER,
@@ -88,7 +88,7 @@ class CreateTables:
         DROP TABLE IF EXISTS public.travel_info;
         CREATE TABLE public.travel_info (
             arrival_date DATE,
-            departure_date VARCHAR,
+            departure_date DATE,
             airline VARCHAR,
             immigrant_id BIGINT
         );
