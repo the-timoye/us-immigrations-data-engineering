@@ -10,6 +10,13 @@ config = configparser.ConfigParser()
 config.read('config.cfg')
 
 def model_data():
+    """
+        @description:
+            This function performs the data cleaning processes using spark. 
+            The cleaned data is then loaded to S3 (bucket specified in the config.cfg)
+        @params:
+            None.
+    """
     spark_session = SparkSession.builder.appName('Yenyenyen').config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.1.2").getOrCreate();
 
     sc = spark_session.sparkContext

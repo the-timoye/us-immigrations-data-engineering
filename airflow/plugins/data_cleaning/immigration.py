@@ -19,6 +19,16 @@ new_column_names = {
 def clean_immigration_data(
     dataframe
 ):
+    """
+        @description:
+            Performs data cleaning functions like renaming the columns in the DataFrame, replacing null values with "not provided", 
+            and changing columns to the appropraite datatypes.
+        @params:
+            dataframe (DataFrame): The spark dataframe to be cleaned.
+        @returns:
+            A cleaned dataframe with renamed columns, no null values and appropraite column datatypes
+    """
+    
     print('========================================= CLEANING IMMIGRATION DATA =========================================')
 
     new_df = remane_columns(dataframe, new_column_names)
