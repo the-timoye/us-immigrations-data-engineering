@@ -4,7 +4,19 @@ from airflow.utils.decorators import apply_defaults
 from airflow.contrib.hooks.aws_hook import AwsHook
 
 class StageTablesOperator(BaseOperator):
-
+    """
+        @description:
+            This operator copies data from a specified S3 bucket to Amazons Redshift.
+        @params:
+            redshift_conn_id (STR): Redshift Connection ID created in Airflow.
+            aws_connection_id (STR): AWS connection ID created in Airflow.
+            table (STR): The name of the table the data in S3 should be copied to.
+            s3_bucket (STR): Created S3 bucket name
+            s3_key (STR): Folder in the S3 bucket that contains data to be transfered to Redshift
+            ignpre_headers (INT): Specifies if these dataset contain headers. 1 for True. 0 for False
+            delimeter (CHAR): Dataset separator. Aplicable with files in CSV format.
+            data_format (STR): Format the data is saved in S3. E.g. CSV, PARQUET, JSON.   
+    """
     def __init__(
         self,
         redshift_conn_id = "redshift_conn_id",
