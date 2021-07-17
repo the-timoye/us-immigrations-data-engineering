@@ -38,7 +38,9 @@ class InsertQueries:
             arrival_date,
             departure_date,
             airline,
-            immigrant_id
+            immigrant_id,
+            visa_type,
+            mode
         FROM staging_immigrations
     """
 

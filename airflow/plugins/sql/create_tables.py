@@ -90,7 +90,9 @@ class CreateTables:
             arrival_date DATE,
             departure_date DATE,
             airline VARCHAR,
-            immigrant_id BIGINT
+            immigrant_id BIGINT,
+            visa_type VARCHAR,
+            mode VARCHAR
         );
     """
 
