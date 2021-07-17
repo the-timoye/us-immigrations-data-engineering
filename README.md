@@ -38,8 +38,8 @@ File Locations <br>
 
 #### Data Schema
 The Galaxy Schema is used in this project - with two fact tables and 6 dimentional tables.
-This schema is most suitable for this project due to the fact that two different sets of data are used to achieve this result. Also, it helps minimalize redundancy, and improve data accuracy
-Each dimension table is connected to its fact table, except the US_STATES table - connected to the US_Cities dimension table. This makes for easy data aggregations and accurate data extractions.
+This schema is most suitable for this project due to the fact that two different sets of data are used to achieve this result. Also, it helps minimalize redundancy, and improve data accuracy.
+Each dimension table is connected to its fact table, except the US_STATES table - connected to the US_Cities dimension table. Although, this requires a little more space taken for a table in the database, and one more join, it still allows for accurate data extractions.
 Below are each tables schema in the database.
 
 STAGING_IMMIGRATIONS (staging table) as loaded from S3 <br>
