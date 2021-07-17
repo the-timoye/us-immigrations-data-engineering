@@ -1,4 +1,4 @@
-# from etl.local_to_s3 import load_to_s3
+
 import configparser;
 from pyspark.sql import SparkSession;
 

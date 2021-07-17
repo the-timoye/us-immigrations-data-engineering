@@ -4,6 +4,4 @@ from helpers.udfs import *
 from data_cleaning.immigration import clean_immigration_data
 from data_cleaning.cities import clean_cities_data
 
-from etl.local_to_s3 import load_to_s3
 from model.models import model_data
-# from model.models import tables
