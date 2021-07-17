@@ -36,6 +36,92 @@ File Locations <br>
     Citites: `airflow/plugins/data_cleaning/cities.py` <br>
     Immigrations: `airflow/plugins/data_cleaning/immigrations.py`
 
+#### Data Schema
+The Galaxy Schema is used in this project - with two fact tables and 6 dimentional tables.
+This schema is most suitable for this project due to the fact that two different sets of data are used to achieve this result. Also, it helps minimalize redundancy, and improve data accuracy
+Each dimension table is connected to its fact table, except the US_STATES table - connected to the US_Cities dimension table. This makes for easy data aggregations and accurate data extractions.
+Below are each tables schema in the database.
+
+STAGING_IMMIGRATIONS (staging table) as loaded from S3 <br>
+    |-- immigrant_id: (bigint) A unique, spark-generated id representing each immigrant  <br>
+    |-- year: (integer) year the data was captured     <br>
+    |-- month: (integer) month the data was captured  <br>
+    |-- resident_country_code: (integer) The resident country code of the immigrant. <br>
+    |-- arrival_date: (date) Date of immigrants arrival <br>
+    |-- address: (varchar) Current US address of the immigrant (state code) <br>
+    |-- departure_date: (date) Date of immigrants departure (if available)  <br>
+    |-- age: (integer) age of immigrant (as at when this data was captured) <br>
+    |-- visa_code: (integer) specifies the type of visa used. Equivalent to Business, Pleasure or Student. <br>
+    |-- birth_year: (integer) Immigrants year of birth <br>
+    |-- gender: (varchar) Immigrants gender <br>
+    |-- airline: (varchar) The airline used by immigrant   <br>
+    |-- mode: (varchar) mode of transport (code) equivalent to LAND, SEA, AIR. If available. <br>
+    |-- resident_country: (varchar) The resident country of the immigrant <br>
+    |-- visa_type: (varchar) specifies the type of visa used  <br>
+    |-- state_address: (varchar) current US state address (unabbreviated).   <br>
+    |-- transport_mode: (varchar) mode of transport (code derived). <br>
+
+STAGING_CITIES (staging table) as loaded from S3 <br>
+    |-- city_id: (bigint) unique, spark generated city identifier <br>
+    |-- city: (varchar) US city name <br>
+    |-- state: (varchar) US state name <br>
+    |-- median_age: (real) median age of residents in this city <br>
+    |-- male_population: (integer) male population of residents in the corresponding city <br>
+    |-- female_population: (integer) female population of residents in the corresponding city <br>
+    |-- total_population: (integer) total population of residents in the corresponding city <br>
+    |-- num_of_veterans: (integer) total number of veterans in each corresponding city <br>
+    |-- no_of_immigrants: (integer) total number of immigrants in each corresponding city <br>
+    |-- avg_household_size: (real) average household size of city residents <br>
+    |-- state_code: (varchar) US state code <br>
+    |-- race: (varchar) most dominant rance in each city <br>
+
+US_GEOGRAPHY (fact table) <br>
+    |-- city_id: (bigint) unique, spark generated city identifier <br>
+    |-- male_population: (integer) male population of residents in the corresponding city <br>
+    |-- female_population: (integer) female population of residents in the corresponding city <br>
+    |-- total_population: (integer) total population of residents in the corresponding city <br>
+    |-- num_of_veterans: (integer) total number of veterans in each corresponding city <br>
+    |-- no_of_immigrants: (integer) total number of immigrants in each corresponding city <br>
+    |-- avg_household_size: (real) average household size of city residents <br>
+
+IMMIGRANTS_FACTS (fact table) <br>
+    |-- immigrant_id: (bigint) A unique, spark-generated id representing each immigrant  <br>
+    |-- year: (integer) year the data was captured     <br>
+    |-- month: (integer) month the data was captured  <br>
+    |-- visa_code: (integer) specifies the type of visa used. Equivalent to Business, Pleasure or Student. <br>
+    |-- mode: (varchar) mode of transport (code) equivalent to LAND, SEA, AIR. If available. <br>
+
+US_CITIES (dim table) <br>
+    |-- city_id: (bigint) unique, spark generated city identifier <br>
+    |-- city: (varchar) US city name <br>
+    |-- state_code: (varchar) US state code <br>
+
+US_STATES (dim table) <br>
+    |-- state: (varchar) US state name <br>
+    |-- state_code: (varchar) US state code <br>
+
+VISA_TYPES (dim table) <br>
+    |-- visa_code: (integer) specifies the type of visa used. Equivalent to Business, Pleasure or Student. <br>
+    |-- visa_type: (varchar) specifies the type of visa used  <br>
+
+TRANSPORT_MODES (dim table) <br>
+    |-- mode: (varchar) mode of transport (code) equivalent to LAND, SEA, AIR. If available. <br>
+    |-- transport_mode: (varchar) mode of transport (code derived). <br>
+
+TRAVEL_INFO (dim table) <br>
+    |-- immigrant_id: (bigint) A unique, spark-generated id representing each immigrant  <br>
+    |-- arrival_date: (date) Date of immigrants arrival <br>
+    |-- departure_date: (date) Date of immigrants departure (if available)  <br>
+    |-- airline: (varchar) The airline used by immigrant   <br>
+
+IMMIGRANTS (dim table) <br>
+    |-- immigrant_id: (bigint) A unique, spark-generated id representing each immigrant  <br>
+    |-- age: (integer) age of immigrant (as at when this data was captured) <br>
+    |-- birth_year: (integer) Immigrants year of birth <br>
+    |-- gender: (varchar) Immigrants gender <br>
+    |-- resident_country: (varchar) The resident country of the immigrant <br>
+
+
 ![alt text](ERD.png "ERD")
 
 ### DATA LOADING PROCESSES
