@@ -5,7 +5,7 @@ Udacity's Data Engineering Capstone Project
 ### THE PROBLEM (USE CASE)
 A company decides to analyse the US immigration database to check student immigrants. The following are examples of questions they need answers to through their analysis:
     - What are the age ranges of immigrant students? <br>
-    - How long do these immigrants stay in the US brfore departure? <br>
+    - How long do these immigrants stay in the US before departure? <br>
     - What is the ration of male to female immigrants for the available years? <br>
     - How many business men stay in the United State for more than 3 months> <br>
 The company would also like to have answers to questioins like: <br>
@@ -120,9 +120,50 @@ IMMIGRANTS (dim table) <br>
     |-- birth_year: (integer) Immigrants year of birth <br>
     |-- gender: (varchar) Immigrants gender <br>
     |-- resident_country: (varchar) The resident country of the immigrant <br>
-
+    |-- address: (varchar) Current US address of the immigrant (state code) <br>
 
 ![alt text](ERD.png "ERD")
+
+#### SAMPLE QUERIES & RESPONSES
+As a response to the sample questions mentioned in the scope, below are the queries to answer these questions.
+- What are the age ranges of immigrant students?
+    ```
+    SELECT MIN(im.age), MAX(im.age)
+    FROM immigrants as im
+    JOIN immigrants_facts imf
+        ON im.immigrant_id = imf.immigrant_id
+    WHERE visa_code = 3;
+    ```
+    ![alt text](Q1.png "ERD")
+
+- How long do these immigrants stay in the US before departure? <br>
+    ```
+    SELECT immigrant_id, arrival_date, departure_date, DATEDIFF(days, arrival_date, departure_date) AS days_difference
+    FROM travel_info;
+    ```
+    ![alt text](Q2.png "ERD")
+
+- What is the ration of male to female immigrants for the available years?
+    ```
+    SELECT gender, COUNT(gender)
+    FROM immigrants
+    WHERE gender = 'M' or gender = 'F'
+    GROUP BY gender;
+    ```
+    ![alt text](Q3.png "ERD")
+
+- Q: How many business men stay in the California for more than 3 months>
+    ```
+    SELECT COUNT(immigrants.immigrant_id) AS no_of_immigrants, DATEDIFF(months, arrival_date, departure_date) AS months_difference
+    FROM immigrants
+    JOIN immigrants_facts
+        ON immigrants.immigrant_id = immigrants_facts.immigrant_id
+    JOIN travel_info
+    	ON immigrants.immigrant_id = travel_info.immigrant_id
+    GROUP BY visa_code, arrival_date, departure_date, gender, address
+    HAVING visa_code = '1' AND gender = 'M' AND address = 'CA' AND DATEDIFF(months, arrival_date, departure_date) > 3
+    ```
+    ![alt text](Q4.png "ERD")
 
 ### DATA LOADING PROCESSES
 Both datasets are compiled and staged first, to an S3 bucket in parquet file format. This is done to have a Data Lake representation of both datasets/tables, and easy access to redshift.
@@ -139,13 +180,26 @@ Airflow is used in this case to ensure each of the above processes are carried o
 
 ## Other Possible Scenarios
 Q: If the data was increased 100 times: <br>
-A: Spark would still be the best possible tools to be used for the Data Exploration and Manipulation processes, as well as loading these datasets to S3.
+A: Spark would still be the best possible tools to be used for the Data Exploration and Manipulation processes, as well as loading these datasets to S3. Apache Spark's data processing is performed in memory, which means computations could be over 10 times faster than the MapReduce processing used in Hadoop. Also, Spark helps to automatically partition data based on the data size, and the number of cores in each node. If this data is 100times increased, partitioning should be adopted. Spark evenly distributes data based on the number of available cores per node.
+Data partitioning can also be done on disk (or storage) using Sparks partitionBy() method. For example, storing the data in S3 by partitioning by year and month, gender or arrival date would go allow for effective data search and aggregations.
+Because Apache Spark is an in-memory data engine, it does not provide a storage system. Storage of data can be done using Amazon S3. Having Spark installed on Amazons EMR will not only help manage processing resources (nodes and memory), but will save the organization compute costs, and use EMRFS as file storage
 
 Q: If the pipeline was to be run on a daily basis by 7am
-A: Airflow would serve best in this case. A "@dail" schedule interval can be set on the DAG, and a start date - with a 7am start time
+A: Airflow would serve best in this case. When defining the DAG, several parameters are provided by airflow for the Engineer to set-up to make scheduling seemless. To achieve this daily 7am schedule, below is an example of what the DAG arguments would look like: <br>
+```
+    dag = DAG(
+        dag_id="generated_dag_id",
+        start_date=(2021,07,15,07,00,00)
+        schedule_interval="@daily"
+    )
+```
+The dag parameters could also helper parameters like `retries`, `retry_delay`, `email_on_retry` to help notify the admin on possible failures and automatically set how many times a DAG should be retired. This reduces the workload of the Data Engineer - having to keep to exact time daily running the same pipeline repetitively. Engineers only have to set up these configurations and monitor these tasks on Airflow's Web UI. 
+Apache Airflow can be run on Amazon's Managed workflow environment created on Amazons Linux AMI instances which helps to monitor queued and running tasks, and determine whether to scale Airflows workers on your environment.
 
 Q: If the database needs to be accessed by 100+ people
-A: Then the best place to have this data after cleaning is the cloud. Having a Data Lake (S3 + Spark, Spark + HDFS, or Athema) or a Warehouse (Redshift) would allow easy and fast access to the database
+A: Then Amazon's Redshift would do the storage work. Redshift is a data warehouse cloud-based system, storing data on a peta-byte scale. Replication would be advisable especially in cases where the database users are in several geographical locations. Redshift automatically creates snapshots that tracks changes to the cluster. Redshift also offers different data replication strategies for its clusters. For example, Amazon Kinesis creates replicas of redshift instances for differnet geographical zones, and ensures these instances are in sync with each other.
+Although, charges are accumulated per time (each hour the redshift cluster is powered on accures charges), Amazon Redshift helps to lower the cost and operational overhead, allowing you to scale only as you need (as your data grows), and allows you to analyse large amounts of data in its natove format.
+
 
 ## RUNNING THE PROJECT
 - Ensure to have all tools and libraries in the requirements.txt file installed, and your virtual environment activated
