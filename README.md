@@ -166,11 +166,11 @@ As a response to the sample questions mentioned in the scope, below are the quer
     ![alt text](Q4.png "ERD")
 
 ### DATA LOADING PROCESSES
-Both datasets are compiled and staged first, to an S3 bucket in parquet file format. This is done to have a Data Lake representation of both datasets/tables, and easy access to redshift.
+Both datasets are compiled and staged first to an S3 bucket in parquet file format. This is done to have a Data Lake representation of both datasets/tables, and easy access to redshift.
 Two major tools are used in this case: Spark - for loading the data, and Amazon S3.
 Having these datasets stored in an S3 bucket allows an opportunity to use the Data Lake method (together with an analysis tool like Spark) if the cost of analysis on Redshift gets too high for the team.
 
-A Data Warehouse option is also provided for proper data structiuring and reduction of Data Lakes chaotic feature among other reasons. Amazons Redshift tool is used as a warehouse to store these datasets in separate facts and dimensional tables. The S3 to Redshift process is carried out using Apache's Airflow - a DAG-based Data Engineering workflow management system. 
+A Data Warehouse option is also provided for proper data structiuring and reduction of Data Lakes chaotic feature among other reasons. Amazons Redshift tool is used as a warehouse to store these datasets in separate facts and dimensional tables. The S3 to Redshift workflow is managed Apache's Airflow - a DAG-based Data Engineering workflow management system. 
 Airflow is used in this case to ensure each of the above processes are carried out in the right order, and the right scheduled time, making the ETL process as seamless as possible.
 
 ### DATA QUALITY CHECKS
